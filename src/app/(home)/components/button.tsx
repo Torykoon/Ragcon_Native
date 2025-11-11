@@ -8,7 +8,6 @@ import { withUniwind } from 'uniwind';
 import type { UsageVariant } from '../../../components/component-presentation/types';
 import { UsageVariantFlatList } from '../../../components/component-presentation/usage-variant-flatlist';
 import { useAppTheme } from '../../../contexts/app-theme-context';
-
 const StyledIonicons = withUniwind(Ionicons);
 
 const SizesContent = () => {

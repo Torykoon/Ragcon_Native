@@ -27,7 +27,7 @@ export const ScreenScrollView: FC<PropsWithChildren<Props>> = ({
       contentContainerStyle={{
         paddingTop: Platform.select({
           ios: headerHeight,
-          android: 0,
+          android: headerHeight,
         }),
         paddingBottom: insets.bottom + 32,
       }}
