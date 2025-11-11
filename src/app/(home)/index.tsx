@@ -39,7 +39,7 @@ const cards: HomeCardProps[] = [
     imageDark:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
     count: 1,
-    footer: 'AI 챗봇과 대화하기',
+    footer: '건설전문 AI 챗봇과 대화하기',
     path: 'components/chat',
   },
   {

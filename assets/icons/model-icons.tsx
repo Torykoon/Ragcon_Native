@@ -12,7 +12,6 @@ export const ChatGPTIcon = ({ size = 20, color = '#10A37F' }) => (
 
 export const ClaudeIcon = ({ size = 20, color = '#CC9B7A' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    {/* Claude SVG path here */}
     <Path
       d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
       fill={color}
@@ -20,4 +19,4 @@ export const ClaudeIcon = ({ size = 20, color = '#CC9B7A' }) => (
   </Svg>
 );
 
-// 나머지 아이콘들도 동일하게...
+// 이 코드는 현재 사용되지 않음
