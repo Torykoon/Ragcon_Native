@@ -60,7 +60,11 @@ export const ModelSelect = ({ data, model, setModel }: Props) => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
           }}
         >
-          <AppText className="text-foreground">{model.emoji}</AppText>
+          {model.icon ? (
+            <model.icon size={20} />
+          ) : (
+            <AppText className="text-foreground">{model.emoji}</AppText>
+          )}
           <AppText className="text-foreground font-medium">
             {model.label}
           </AppText>

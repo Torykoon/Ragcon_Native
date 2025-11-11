@@ -1,32 +1,42 @@
 import Feather from '@expo/vector-icons/Feather';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'expo-status-bar';
 import {
-    Card,
-    Spinner,
-    TextField,
-    useThemeColor
+  Card,
+  cn,
+  Spinner,
+  useThemeColor
 } from 'heroui-native';
 import { useCallback, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
 } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import Animated, {
-    FadeIn,
-    FadeInDown,
-    LinearTransition,
+  FadeIn,
+  FadeInDown,
+  LinearTransition,
 } from 'react-native-reanimated';
 import { withUniwind } from 'uniwind';
 import { AppText } from '../../../components/app-text';
+import { ModelSelect } from '../../../components/showcases/raycast/model-select';
+import type { ModelOption } from '../../../components/showcases/raycast/model-select/types';
 import { useAppTheme } from '../../../contexts/app-theme-context';
 
+
+
 const StyledFeather = withUniwind(Feather);
+const StyledFontAwesome6 = withUniwind(FontAwesome6);
+const StyledIonicons = withUniwind(Ionicons);
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 type Message = {
@@ -45,12 +55,33 @@ type ApiResponse = {
 
 const API_URL = 'http://43.200.214.138:8080/ragcon';
 
+const MODELS: ModelOption[] = [
+  //{ value: 'raycast', label: 'Raycast AI', emoji: '⚡' },
+  //{ value: 'chatgpt', label: 'ChatGPT', icon: ChatGPTIcon},
+  { value: 'chatgpt', label: 'ChatGPT'},
+  { value: 'claude', label: 'Claude'},
+  { value: 'gemini', label: 'Gemini'},
+  { value: 'perplexity', label: 'Perplexity'},
+  { value: 'deepseek', label: 'DeepSeek'},
+  { value: 'llama', label: 'Llama'},
+  { value: 'grok', label: 'Grok'},
+  { value: 'mistral', label: 'Mistral' },
+  { value: 'moonshot', label: 'Moonshot AI'},
+  { value: 'qwen', label: 'Qwen'},
+];
+
+const simulatePress = () => {
+  Alert.alert('Coming soon!');
+};
+
 export default function Chat() {
   const { isDark } = useAppTheme();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [model, setModel] = useState<ModelOption>(MODELS[0]!);
   const scrollViewRef = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
 
   const themeColorForeground = useThemeColor('foreground');
   const themeColorMuted = useThemeColor('muted');
@@ -360,36 +391,84 @@ export default function Chat() {
         {renderTypingIndicator()}
       </ScrollView>
 
-      <View className="border-t border-border bg-background px-4 py-3">
-        <View className="flex-row items-end gap-2">
-          <View className="flex-1">
-            <TextField>
-              <TextField.Input
-                placeholder="메시지를 입력하세요..."
+      <View className="bg-background px-4 py-3">
+        <View
+          className={cn(
+            'p-2 bg-surface-quaternary/70 rounded-3xl border border-neutral-400/10 gap-7',
+            isDark && 'border-neutral-600/10'
+          )}
+          style={styles.borderCurve}
+        >
+          <View className="flex-row items-center justify-between pr-1">
+            <ModelSelect data={MODELS} model={model} setModel={setModel} />
+            <Pressable
+              className="flex-row items-center gap-1.5"
+              onPress={simulatePress}
+            >
+              <AppText
+                className={cn(
+                  'text-lg text-neutral-800',
+                  isDark && 'text-neutral-300'
+                )}
+              >
+                Auto
+              </AppText>
+              <StyledIonicons
+                name="chevron-expand"
+                size={16}
+                className="text-muted"
+              />
+            </Pressable>
+          </View>
+          <View className="flex-row items-center gap-3">
+            <Pressable className="p-2 opacity-80" onPress={simulatePress}>
+              <StyledFontAwesome6
+                name="paperclip"
+                size={20}
+                className="text-foreground"
+              />
+            </Pressable>
+            <View className="flex-1">
+              <TextInput
+                ref={inputRef}
+                placeholder={`Ask ${model.label}...`}
+                placeholderTextColor={themeColorMuted}
                 value={inputText}
                 onChangeText={setInputText}
-                multiline
-                numberOfLines={1}
-                maxLength={500}
                 editable={!isLoading}
                 onSubmitEditing={sendMessage}
                 returnKeyType="send"
                 blurOnSubmit={false}
-                className="max-h-24"
+                multiline
+                maxLength={500}
+                style={{
+                  fontSize: 18,
+                  color: themeColorForeground,
+                  maxHeight: 100,
+                }}
               />
-            </TextField>
+            </View>
+            <Pressable
+              className={cn(
+                'flex-row items-center justify-center gap-1 px-7 py-4 rounded-[16px] bg-neutral-300/50 border border-neutral-400/30',
+                isDark && 'bg-neutral-700/50 border-neutral-600/30',
+                (!inputText.trim() || isLoading) && 'opacity-50'
+              )}
+              style={styles.borderCurve}
+              onPress={sendMessage}
+              disabled={!inputText.trim() || isLoading}
+            >
+              {isLoading ? (
+                <Spinner size="sm" />
+              ) : (
+                <StyledFeather
+                  name="send"
+                  size={20}
+                  className="text-foreground"
+                />
+              )}
+            </Pressable>
           </View>
-          <Pressable
-            onPress={sendMessage}
-            disabled={!inputText.trim() || isLoading}
-            className="size-12 rounded-full bg-accent items-center justify-center disabled:opacity-50"
-          >
-            {isLoading ? (
-              <Spinner size="sm" color={themeColorBackground} />
-            ) : (
-              <StyledFeather name="send" size={20} className="text-accent-foreground" />
-            )}
-          </Pressable>
         </View>
       </View>
 
@@ -397,3 +476,9 @@ export default function Chat() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  borderCurve: {
+    borderCurve: 'continuous',
+  },
+});

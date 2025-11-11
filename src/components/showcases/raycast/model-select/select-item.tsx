@@ -48,7 +48,11 @@ export const SelectItem: FC<Props> = ({ data }) => {
         </View>
       )}
       <View className="flex-row items-center gap-3 flex-1">
-        <AppText className="text-2xl mr-3">{data.emoji}</AppText>
+        {data.icon ? (
+          <data.icon size={7} />
+        ) : (
+          <AppText>{data.emoji}</AppText>
+        )}
         <AppText className="text-lg text-foreground font-medium flex-1">
           {data.label}
         </AppText>
