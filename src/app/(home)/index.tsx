@@ -72,7 +72,7 @@ type HomeCardProps = {
 
 const cards: HomeCardProps[] = [
   {
-    title: 'Chat',
+    title: 'AI 도우미',
     imageLight:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-light.png',
     imageDark:
@@ -82,33 +82,33 @@ const cards: HomeCardProps[] = [
     path: 'components/chat',
   },
   {
-    title: 'Components',
+    title: '위험성 평가 작성',
     imageLight:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-light.png',
     imageDark:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
     count: 20,
-    footer: 'Explore all components',
+    footer: 'AI를 활용한 위험성 평가 작성하기',
     path: 'components',
   },
   {
-    title: 'Themes',
+    title: '사고사례 검토',
     imageLight:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-light.png',
     imageDark:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-dark.png',
     count: 4,
-    footer: 'Try different themes',
+    footer: '사고사례 검토를 진행합니다.',
     path: 'themes',
   },
   {
-    title: 'Showcases',
+    title: 'TBM 작성',
     imageLight:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
     imageDark:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
     count: 5,
-    footer: 'View components in action',
+    footer: 'AI를 활용한 TBM 작성하기',
     path: 'showcases',
   },
     {
