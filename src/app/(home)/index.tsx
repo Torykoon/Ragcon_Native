@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Avatar, Card, cn, Surface } from 'heroui-native';
+import { Avatar, Card, cn, TextField, Button, Surface } from 'heroui-native';
 import type { FC } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import Animated, {
@@ -16,6 +16,7 @@ import { withUniwind } from 'uniwind';
 import { AppText } from '../../components/app-text';
 import { ScreenScrollView } from '../../components/screen-scroll-view';
 import { useAppTheme } from '../../contexts/app-theme-context';
+import { useRisk } from '../../contexts/risk-context';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedImage = Animated.createAnimatedComponent(Image);
@@ -89,7 +90,7 @@ const cards: HomeCardProps[] = [
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
     count: 20,
     footer: 'AI를 활용한 위험성 평가 작성하기',
-    path: 'components',
+    path: 'components/risk',
   },
   {
     title: '사고사례 검토',
@@ -471,6 +472,7 @@ const HomeCard: FC<HomeCardProps & { index: number }> = ({
 };
 
 export default function App() {
+  const { process, setProcess, refreshHazardFromProcess, loading } = useRisk();
   const { isDark } = useAppTheme();
 
   return (
@@ -500,6 +502,18 @@ export default function App() {
         <View className="flex-1">
           <RiskAssessmentCard />
         </View>
+      </View>
+
+        
+      <View className="flex flex-col gap-[10px]">
+        <TextField isRequired>
+          <TextField.Label>공정(process)</TextField.Label>
+          <TextField.Input value={process} onChangeText={setProcess} />
+        </TextField>
+
+        <Button onPress={refreshHazardFromProcess} className="mb-[30px]" >
+          {loading ? '생성 중...' : '공정으로 안전점검활동 시작'}
+        </Button>
       </View>
 
       <View className="gap-6">

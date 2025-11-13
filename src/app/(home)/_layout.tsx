@@ -73,6 +73,8 @@ export default function Layout() {
         options={{ title: 'Checkbox' }}
       />
       <Stack.Screen name="components/chat" options={{ title: 'Chat' }} />
+      <Stack.Screen name="components/risk" options={{ title: '위험성평가 작성' }} />
+      <Stack.Screen name="components/risk-edit" options={{ title: '위험성평가 수정' }} />
 
       <Stack.Screen name="components/chip" options={{ title: 'Chip' }} />
       <Stack.Screen name="components/dialog" options={{ title: 'Dialog' }} />

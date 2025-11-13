@@ -16,6 +16,7 @@ import {
 } from 'react-native-reanimated';
 import '../../global.css';
 import { AppThemeProvider } from '../contexts/app-theme-context';
+import { RiskProvider } from '../contexts/risk-context';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -45,7 +46,9 @@ export default function Layout() {
               },
             }}
           >
-            <Slot />
+            <RiskProvider>
+              <Slot />
+            </RiskProvider>
           </HeroUINativeProvider>
         </AppThemeProvider>
       </KeyboardProvider>
