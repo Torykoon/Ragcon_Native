@@ -67,6 +67,26 @@ const cards: HomeCardProps[] = [
     footer: '위험성 평가, 사고사례 검토, TBM 작성',
     path: 'safety-check', 
   },
+  {
+    title: '템플릿',
+    imageLight:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
+    imageDark:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
+    count: 3, 
+    footer: '위험성 평가, 사고사례 검토, TBM 작성',
+    path: 'showcases', 
+  },
+  {
+    title: '컴포넌트',
+    imageLight:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
+    imageDark:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
+    count: 3, 
+    footer: '위험성 평가, 사고사례 검토, TBM 작성',
+    path: 'components', 
+  },
 ];
 
 // Favorite 항목 타입 정의

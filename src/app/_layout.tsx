@@ -16,6 +16,7 @@ import {
 } from 'react-native-reanimated';
 import '../../global.css';
 import { AppThemeProvider } from '../contexts/app-theme-context';
+import { WorkProvider } from '../contexts/work-context';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -38,15 +39,17 @@ export default function Layout() {
     <GestureHandlerRootView style={styles.root}>
       <KeyboardProvider>
         <AppThemeProvider>
-          <HeroUINativeProvider
-            config={{
-              textProps: {
-                allowFontScaling: false,
-              },
-            }}
-          >
-            <Slot />
-          </HeroUINativeProvider>
+          <WorkProvider>
+            <HeroUINativeProvider
+              config={{
+                textProps: {
+                  allowFontScaling: false,
+                },
+              }}
+            >
+              <Slot />
+            </HeroUINativeProvider>
+          </WorkProvider>
         </AppThemeProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
