@@ -1,27 +1,13 @@
-import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Avatar, Card, cn, Surface } from 'heroui-native';
 import type { FC } from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
-import Animated, {
-  Easing,
-  FadeIn,
-  FadeInDown,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
-import { withUniwind } from 'uniwind';
+import { Pressable, ScrollView, View } from 'react-native';
 import { AppText } from '../../components/app-text';
+import { HomeCard, type HomeCardProps } from '../../components/HomeCard';
 import { ScreenScrollView } from '../../components/screen-scroll-view';
 import { useAppTheme } from '../../contexts/app-theme-context';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const AnimatedImage = Animated.createAnimatedComponent(Image);
-const AnimatedView = Animated.createAnimatedComponent(View);
-
-const StyledFeather = withUniwind(Feather);
 
 // 안전지수 데이터 타입
 type SafetyIndexData = {
@@ -60,16 +46,6 @@ const riskAssessmentData: DailyRiskData[] = [
   { date: '일', level: 'low' },
 ];
 
-
-type HomeCardProps = {
-  title: string;
-  imageLight: string;
-  imageDark: string;
-  count: number;
-  footer: string;
-  path: string;
-};
-
 const cards: HomeCardProps[] = [
   {
     title: 'AI 도우미',
@@ -79,67 +55,17 @@ const cards: HomeCardProps[] = [
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
     count: 1,
     footer: '건설전문 AI 챗봇과 대화하기',
-    path: 'components/chat',
+    path: 'chat',
   },
   {
-    title: '위험성 평가 작성',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
-    count: 20,
-    footer: 'AI를 활용한 위험성 평가 작성하기',
-    path: 'components',
-  },
-  {
-    title: '사고사례 검토',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-dark.png',
-    count: 4,
-    footer: '사고사례 검토를 진행합니다.',
-    path: 'themes',
-  },
-  {
-    title: 'TBM 작성',
+    title: '안전점검시작',
     imageLight:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
     imageDark:
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
-    count: 5,
-    footer: 'AI를 활용한 TBM 작성하기',
-    path: 'showcases',
-  },
-    {
-    title: '개발 컴포넌트',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
-    count: 20,
-    footer: 'Explore all components',
-    path: 'components',
-  },
-  {
-    title: '개발 테마',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-dark.png',
-    count: 4,
-    footer: 'Try different themes',
-    path: 'themes',
-  },
-  {
-    title: '개발 예시',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
-    count: 5,
-    footer: 'View components in action',
-    path: 'showcases',
+    count: 3, 
+    footer: '위험성 평가, 사고사례 검토, TBM 작성',
+    path: 'safety-check', 
   },
 ];
 
@@ -383,92 +309,6 @@ const RiskAssessmentCard: FC = () => {
   );
 };
 
-const HomeCard: FC<HomeCardProps & { index: number }> = ({
-  title,
-  imageLight,
-  imageDark,
-  count,
-  footer,
-  path,
-  index,
-}) => {
-  const router = useRouter();
-
-  const { isDark } = useAppTheme();
-
-  const rLightImageStyle = useAnimatedStyle(() => {
-    return {
-      opacity: isDark ? 0 : withTiming(0.4),
-    };
-  });
-
-  const rDarkImageStyle = useAnimatedStyle(() => {
-    return {
-      opacity: isDark ? withTiming(0.4) : 0,
-    };
-  });
-
-  return (
-    <AnimatedPressable
-      entering={FadeInDown.duration(300)
-        .delay(index * 100)
-        .easing(Easing.out(Easing.ease))}
-      onPress={() => router.push(path)}
-    >
-      <Card
-        className={cn(
-          'p-0 border border-zinc-200',
-          isDark && 'border-zinc-900'
-        )}
-      >
-        <AnimatedView
-          entering={FadeIn}
-          className="absolute inset-0 w-full h-full"
-        >
-          <AnimatedImage
-            source={{ uri: imageLight }}
-            className="absolute inset-0 w-full h-full"
-            resizeMode="cover"
-            style={rLightImageStyle}
-          />
-          <AnimatedImage
-            source={{ uri: imageDark }}
-            className="absolute inset-0 w-full h-full"
-            resizeMode="cover"
-            style={rDarkImageStyle}
-          />
-        </AnimatedView>
-        <View className="gap-4">
-          {/* <Card.Header className="p-3">
-            <Chip size="sm" className="bg-background/25">
-              <Chip.Label className="text-foreground/85">
-                {`${count} total`}
-              </Chip.Label>
-            </Chip>
-          </Card.Header> */}
-          <Card.Body className="h-5" />
-          <Card.Footer className="px-3 pb-3 flex-row items-end gap-4">
-            <View className="flex-1">
-              <Card.Title className="text-2xl text-foreground/85">
-                {title}
-              </Card.Title>
-              <Card.Description className="text-foreground/65 pl-0.5">
-                {footer}
-              </Card.Description>
-            </View>
-            <View className="size-9 rounded-full bg-background/25 items-center justify-center">
-              <StyledFeather
-                name="arrow-up-right"
-                size={20}
-                className="text-foreground"
-              />
-            </View>
-          </Card.Footer>
-        </View>
-      </Card>
-    </AnimatedPressable>
-  );
-};
 
 export default function App() {
   const { isDark } = useAppTheme();

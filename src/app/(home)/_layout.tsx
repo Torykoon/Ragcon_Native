@@ -72,7 +72,6 @@ export default function Layout() {
         name="components/checkbox"
         options={{ title: 'Checkbox' }}
       />
-      <Stack.Screen name="components/chat" options={{ title: 'Chat' }} />
 
       <Stack.Screen name="components/chip" options={{ title: 'Chip' }} />
       <Stack.Screen name="components/dialog" options={{ title: 'Dialog' }} />
