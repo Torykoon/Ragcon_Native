@@ -100,7 +100,7 @@ const cards: HomeCardProps[] = [
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-dark.png',
     count: 4,
     footer: '사고사례 검토를 진행합니다.',
-    path: 'themes',
+    path: 'components/accident',
   },
   {
     title: 'TBM 작성',
@@ -472,7 +472,7 @@ const HomeCard: FC<HomeCardProps & { index: number }> = ({
 };
 
 export default function App() {
-  const { process, setProcess, refreshHazardFromProcess, loading } = useRisk();
+  const { process, setProcess, refreshHazardFromProcess, refreshAccidentFromProcess, loading } = useRisk();
   const { isDark } = useAppTheme();
 
   return (
@@ -511,7 +511,10 @@ export default function App() {
           <TextField.Input value={process} onChangeText={setProcess} />
         </TextField>
 
-        <Button onPress={refreshHazardFromProcess} className="mb-[30px]" >
+        <Button onPress={() => {
+          refreshHazardFromProcess();
+          refreshAccidentFromProcess();}
+        } className="mb-[30px]" >
           {loading ? '생성 중...' : '공정으로 안전점검활동 시작'}
         </Button>
       </View>
