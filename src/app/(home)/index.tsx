@@ -110,7 +110,7 @@ const cards: HomeCardProps[] = [
       'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
     count: 5,
     footer: 'AI를 활용한 TBM 작성하기',
-    path: 'showcases',
+    path: 'components/tbm',
   },
     {
     title: '개발 컴포넌트',
@@ -472,7 +472,7 @@ const HomeCard: FC<HomeCardProps & { index: number }> = ({
 };
 
 export default function App() {
-  const { process, setProcess, refreshHazardFromProcess, refreshAccidentFromProcess, loading } = useRisk();
+  const { process, setProcess, refreshHazardFromProcess, refreshAccidentFromProcess, refreshTbmFromProcess, loading, acciLoading, tbmloading } = useRisk();
   const { isDark } = useAppTheme();
 
   return (
@@ -513,25 +513,40 @@ export default function App() {
 
         <Button onPress={() => {
           refreshHazardFromProcess();
-          refreshAccidentFromProcess();}
+          refreshAccidentFromProcess();
+          refreshTbmFromProcess();
+        }
         } className="mb-[30px]" >
-          {loading ? '생성 중...' : '공정으로 안전점검활동 시작'}
+          {loading || acciLoading || tbmloading ? '생성 중...' : '공정으로 안전점검활동 시작'}
         </Button>
       </View>
 
       <View className="gap-6">
-        {cards.map((card, index) => (
-          <HomeCard
-            key={card.title}
-            title={card.title}
-            imageLight={card.imageLight}
-            imageDark={card.imageDark}
-            count={card.count}
-            footer={card.footer}
-            path={card.path}
-            index={index}
-          />
-        ))}
+        {cards
+          .filter((card) => {
+            if (card.title === '위험성 평가 작성') {
+              return !loading;          // loading이 false일 때만 보여줌
+            }
+            if (card.title === '사고사례 검토') {
+              return !acciLoading;      // acciLoading이 false일 때만
+            }
+            if (card.title === 'TBM 작성') {
+              return !tbmloading;       // tbmloading이 false일 때만
+            }
+            return true;                // 나머지 카드는 항상 보여줌
+          })
+          .map((card, index) => (
+            <HomeCard
+              key={card.title}
+              title={card.title}
+              imageLight={card.imageLight}
+              imageDark={card.imageDark}
+              count={card.count}
+              footer={card.footer}
+              path={card.path}
+              index={index}
+            />
+          ))}
       </View>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </ScreenScrollView>
