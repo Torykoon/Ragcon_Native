@@ -17,6 +17,7 @@ import {
 import '../../global.css';
 import { AppThemeProvider } from '../contexts/app-theme-context';
 import { RiskProvider } from '../contexts/risk-context';
+import { WorkProvider } from '../contexts/work-context';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -39,17 +40,19 @@ export default function Layout() {
     <GestureHandlerRootView style={styles.root}>
       <KeyboardProvider>
         <AppThemeProvider>
-          <HeroUINativeProvider
-            config={{
-              textProps: {
-                allowFontScaling: false,
-              },
-            }}
-          >
-            <RiskProvider>
-              <Slot />
-            </RiskProvider>
-          </HeroUINativeProvider>
+          <WorkProvider>
+            <HeroUINativeProvider
+              config={{
+                textProps: {
+                  allowFontScaling: false,
+                },
+              }}
+            >
+              <RiskProvider>
+                <Slot />
+              </RiskProvider>
+            </HeroUINativeProvider>
+          </WorkProvider>
         </AppThemeProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
