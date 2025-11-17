@@ -16,6 +16,7 @@ import {
 } from 'react-native-reanimated';
 import '../../global.css';
 import { AppThemeProvider } from '../contexts/app-theme-context';
+import { RiskProvider } from '../contexts/risk-context';
 import { WorkProvider } from '../contexts/work-context';
 
 configureReanimatedLogger({
@@ -47,7 +48,9 @@ export default function Layout() {
                 },
               }}
             >
-              <Slot />
+              <RiskProvider>
+                <Slot />
+              </RiskProvider>
             </HeroUINativeProvider>
           </WorkProvider>
         </AppThemeProvider>

@@ -1,13 +1,14 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Avatar, Card, cn, Surface } from 'heroui-native';
+import { Avatar, Card, cn, TextField, Button, Surface } from 'heroui-native';
 import type { FC } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { AppText } from '../../components/app-text';
 import { HomeCard, type HomeCardProps } from '../../components/HomeCard';
 import { ScreenScrollView } from '../../components/screen-scroll-view';
 import { useAppTheme } from '../../contexts/app-theme-context';
+import { useRisk } from '../../contexts/risk-context';
 
 // 안전지수 데이터 타입
 type SafetyIndexData = {
@@ -66,6 +67,36 @@ const cards: HomeCardProps[] = [
     count: 3, 
     footer: '위험성 평가, 사고사례 검토, TBM 작성',
     path: 'safety-check', 
+  },
+  {
+    title: '위험성 평가 작성',
+    imageLight:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-light.png',
+    imageDark:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-components-dark.png',
+    count: 20,
+    footer: 'AI를 활용한 위험성 평가 작성하기',
+    path: 'components/risk',
+  },
+  {
+    title: '사고사례 검토',
+    imageLight:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-light.png',
+    imageDark:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-themes-dark.png',
+    count: 4,
+    footer: '사고사례 검토를 진행합니다.',
+    path: 'components/accident',
+  },
+  {
+    title: 'TBM 작성',
+    imageLight:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
+    imageDark:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
+    count: 5,
+    footer: 'AI를 활용한 TBM 작성하기',
+    path: 'components/tbm',
   },
   {
     title: '템플릿',
@@ -331,6 +362,7 @@ const RiskAssessmentCard: FC = () => {
 
 
 export default function App() {
+  const { process, setProcess, refreshHazardFromProcess, refreshAccidentFromProcess, refreshTbmFromProcess, loading, acciLoading, tbmloading } = useRisk();
   const { isDark } = useAppTheme();
 
   return (
@@ -362,19 +394,49 @@ export default function App() {
         </View>
       </View>
 
+        
+      <View className="flex flex-col gap-[10px]">
+        <TextField isRequired>
+          <TextField.Label>공정(process)</TextField.Label>
+          <TextField.Input value={process} onChangeText={setProcess} />
+        </TextField>
+
+        <Button onPress={() => {
+          refreshHazardFromProcess();
+          refreshAccidentFromProcess();
+          refreshTbmFromProcess();
+        }
+        } className="mb-[30px]" >
+          {loading || acciLoading || tbmloading ? '생성 중...' : '공정으로 안전점검활동 시작'}
+        </Button>
+      </View>
+
       <View className="gap-6">
-        {cards.map((card, index) => (
-          <HomeCard
-            key={card.title}
-            title={card.title}
-            imageLight={card.imageLight}
-            imageDark={card.imageDark}
-            count={card.count}
-            footer={card.footer}
-            path={card.path}
-            index={index}
-          />
-        ))}
+        {cards
+          .filter((card) => {
+            if (card.title === '위험성 평가 작성') {
+              return !loading;          // loading이 false일 때만 보여줌
+            }
+            if (card.title === '사고사례 검토') {
+              return !acciLoading;      // acciLoading이 false일 때만
+            }
+            if (card.title === 'TBM 작성') {
+              return !tbmloading;       // tbmloading이 false일 때만
+            }
+            return true;                // 나머지 카드는 항상 보여줌
+          })
+          .map((card, index) => (
+            <HomeCard
+              key={card.title}
+              title={card.title}
+              imageLight={card.imageLight}
+              imageDark={card.imageDark}
+              count={card.count}
+              footer={card.footer}
+              path={card.path}
+              index={index}
+            />
+          ))}
       </View>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </ScreenScrollView>
