@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 특정 도메인만 HTTP 허용 (권장) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">43.200.214.138</domain>
+    </domain-config>
+    
+    <!-- 기본 설정 -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

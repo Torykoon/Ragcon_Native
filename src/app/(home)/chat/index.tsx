@@ -8,10 +8,11 @@ import {
   Spinner,
   useThemeColor
 } from 'heroui-native';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -56,8 +57,6 @@ type ApiResponse = {
 const API_URL = 'http://43.200.214.138:8080/ragcon';
 
 const MODELS: ModelOption[] = [
-  //{ value: 'raycast', label: 'Raycast AI', emoji: '⚡' },
-  //{ value: 'chatgpt', label: 'ChatGPT', icon: ChatGPTIcon},
   { value: 'chatgpt', label: 'ChatGPT'},
   { value: 'claude', label: 'Claude'},
   { value: 'gemini', label: 'Gemini'},
@@ -89,6 +88,22 @@ export default function Chat() {
   const themeColorSurface = useThemeColor('surface');
   const themeColorAccent = useThemeColor('accent');
   const themeColorBorder = useThemeColor('border');
+
+  // 키보드 이벤트 리스너 추가
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => {
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+    };
+  }, []);
 
   const markdownStyles = {
     body: {
@@ -220,6 +235,13 @@ export default function Chat() {
       borderTopColor: themeColorBorder,
     },
   };
+
+  // TextInput 포커스 핸들러
+  const handleInputFocus = useCallback(() => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 300);
+  }, []);
 
   const sendMessage = useCallback(async () => {
     if (!inputText.trim() || isLoading) return;
@@ -370,8 +392,8 @@ export default function Chat() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
       className="flex-1 bg-background"
     >
       <ScrollView
@@ -384,6 +406,7 @@ export default function Chat() {
           paddingBottom: 16,
         }}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
         showsVerticalScrollIndicator={true}
       >
         {renderEmptyState()}
@@ -391,7 +414,7 @@ export default function Chat() {
         {renderTypingIndicator()}
       </ScrollView>
 
-      <View className="bg-background px-4 py-3">
+      <View className="bg-background px-4 py-3 pb-safe">
         <View
           className={cn(
             'p-2 bg-surface-quaternary/70 rounded-3xl border border-neutral-400/10 gap-7',
@@ -435,6 +458,7 @@ export default function Chat() {
                 placeholderTextColor={themeColorMuted}
                 value={inputText}
                 onChangeText={setInputText}
+                onFocus={handleInputFocus}
                 editable={!isLoading}
                 onSubmitEditing={sendMessage}
                 returnKeyType="send"
@@ -445,6 +469,7 @@ export default function Chat() {
                   fontSize: 18,
                   color: themeColorForeground,
                   maxHeight: 100,
+                  minHeight: 40,
                 }}
               />
             </View>

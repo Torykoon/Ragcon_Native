@@ -8,7 +8,6 @@ import { AppText } from '../../components/app-text';
 import { HomeCard, type HomeCardProps } from '../../components/HomeCard';
 import { ScreenScrollView } from '../../components/screen-scroll-view';
 import { useAppTheme } from '../../contexts/app-theme-context';
-import { useRisk } from '../../contexts/risk-context';
 
 // 안전지수 데이터 타입
 type SafetyIndexData = {
@@ -67,26 +66,6 @@ const cards: HomeCardProps[] = [
     count: 3, 
     footer: '위험성 평가, 사고사례 검토, TBM 작성',
     path: 'safety-check', 
-  },
-  {
-    title: '템플릿',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
-    count: 3, 
-    footer: '위험성 평가, 사고사례 검토, TBM 작성',
-    path: 'showcases', 
-  },
-  {
-    title: '컴포넌트',
-    imageLight:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-light.png',
-    imageDark:
-      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/heroui-native-example/home-showcases-dark-1.png',
-    count: 3, 
-    footer: '위험성 평가, 사고사례 검토, TBM 작성',
-    path: 'components', 
   },
 ];
 

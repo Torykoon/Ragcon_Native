@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, useThemeColor } from 'heroui-native';
 import { Image, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
-//import LogoDark from '../../assets/logo-dark.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LogoLight from '../../assets/ragcon_icon.png';
 import { AppText } from '../components/app-text';
 import { useAppTheme } from '../contexts/app-theme-context';
@@ -14,16 +14,19 @@ export default function StartScreen() {
   const router = useRouter();
   const { isDark } = useAppTheme();
   const themeColorBackground = useThemeColor('background');
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 items-center justify-center bg-background p-6">
+    <View 
+      className="flex-1 items-center justify-center bg-background p-6"
+      style={{ paddingBottom: Math.max(insets.bottom, 24) }}
+    >
       <StatusBar style={isDark ? 'light' : 'dark'} />
       
       <View className="flex-1 items-center justify-center gap-6">
         <AnimatedImage
           entering={FadeIn.duration(1000)}
-          //source={isDark ? LogoLight : LogoDark}
-          source= {LogoLight}
+          source={LogoLight}
           className="w-70 h-70"
           resizeMode="contain"
         />
@@ -32,7 +35,7 @@ export default function StartScreen() {
             Ragcon Native에 오신 것을 환영합니다
           </AppText>
         </Animated.View>
-         <Animated.View entering={FadeInDown.duration(800).delay(400)}>
+        <Animated.View entering={FadeInDown.duration(800).delay(400)}>
           <AppText className="text-lg text-muted text-center">
             건설현장 AI 시스템 데모
           </AppText>
@@ -45,7 +48,7 @@ export default function StartScreen() {
       >
         <Button
           size="lg"
-          onPress={() => router.push('/(home)')} // (home) 그룹의 index로 라우팅합니다.
+          onPress={() => router.push('/(home)')}
         >
           <Button.Label>시작하기</Button.Label>
         </Button>
