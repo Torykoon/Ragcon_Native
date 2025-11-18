@@ -11,8 +11,8 @@ import {
   ScrollView,
   View
 } from 'react-native';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { useRisk } from '../../../contexts/risk-context';
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { useRisk } from '../../../../contexts/risk-context';
 
 export default function CheckAccident() {
   const { accidents } = useRisk();
@@ -72,7 +72,7 @@ export default function CheckAccident() {
         </View>
       </ScrollView>
 
-      <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+      <View className="border-t border-border bg-background px-4 py-3">
         <Button size="md"
           onPress={() => router.back()}
         >

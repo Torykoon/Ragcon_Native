@@ -13,9 +13,9 @@ import {
   ScrollView,
   View
 } from 'react-native';
-import { AppText } from '../../../components/app-text';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { SelectOption, RISK_VALUES, useRisk } from '../../../contexts/risk-context';
+import { AppText } from '../../../../components/app-text';
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { SelectOption, RISK_VALUES, useRisk } from '../../../../contexts/risk-context';
 
 export default function RiskEdit() {
   const { hazard, setHazard} = useRisk();
@@ -239,7 +239,7 @@ export default function RiskEdit() {
         </ScrollView>
 
         {/* ✅ 하단 고정 버튼 영역 */}
-        <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+        <View className="border-t border-border bg-background px-4 py-3">
           <Button size="md"
             onPress={() => {
               const updatedHazards = hazard.map((h, i) =>
@@ -262,7 +262,7 @@ export default function RiskEdit() {
               );
 
               setHazard(updatedHazards);                  // ✅ 전체 배열 저장
-              router.push("/components/risk");
+              router.push("/(home)/(safety)/risk/risk");
             }}>
               수정 완료
           </Button>

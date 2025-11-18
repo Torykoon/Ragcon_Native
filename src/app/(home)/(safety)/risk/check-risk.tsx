@@ -6,19 +6,17 @@ import {
 } from 'heroui-native';
 import { useRef } from 'react';
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   View
 } from 'react-native';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { useRisk } from '../../../contexts/risk-context';
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { useRisk } from '../../../../contexts/risk-context';
 
 
 
-export default function Risk() {
+export default function CheckRisk() {
   const { hazard } = useRisk();
   const router = useRouter();
   const { isDark } = useAppTheme();
@@ -94,28 +92,6 @@ export default function Risk() {
                           </Card.Description>
                         </View>
                       </Card.Body>
-                      <Pressable
-                        onPress={() => router.push({
-                          pathname: "/components/risk-edit",
-                          params: { index: String(index) },   // ✅ index 전달
-                        })}
-                        style={{
-                          justifyContent: 'center', // 세로 중앙
-                          alignItems: 'center',     // 가로 중앙
-                        }}
-                      >
-                        <View
-                          style={{
-                            paddingLeft: 8,
-                          }}
-                        >
-                          <Image
-                            source={require("../../../../assets/icons/arrow-right-icons.png")}
-                            style={{ width: 12 }}
-                            resizeMode="contain"
-                          />
-                        </View>
-                      </Pressable>
                     </View>
                   </Card>
                 );
@@ -125,11 +101,11 @@ export default function Risk() {
         </View>
       </ScrollView>
 
-      <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+      <View className="border-t border-border bg-background px-4 py-3">
         <Button size="md"
-          onPress={() => router.push("/")}
+          onPress={() => router.back()}
         >
-          작성 완료</Button>
+          내용 확인 완료</Button>
       </View>
 
       <StatusBar style={isDark ? 'light' : 'dark'} />

@@ -17,12 +17,11 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  View,
-  Text
+  View
 } from 'react-native';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { useRisk, TBM_LABELS  } from '../../../contexts/risk-context';
-import type { TbmKey, AppRoute } from '../../../contexts/risk-context'; 
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { useRisk, TBM_LABELS  } from '../../../../contexts/risk-context';
+import type { TbmKey, AppRoute } from '../../../../contexts/risk-context'; 
 
 
 
@@ -43,11 +42,11 @@ export default function Tbm() {
   > = {
     risks: {
       title: '위험성평가 내용 확인',
-      url: '/components/check-risk',
+      url: '/(home)/(safety)/risk/check-risk',
     },
     accidents: {
       title: '사고사례 내용 확인',
-      url: '/components/check-accident',
+      url: '/(home)/(safety)/accident/check-accident',
     },
   };
 
@@ -93,7 +92,6 @@ export default function Tbm() {
     }
     setFields((prev) => ({ ...prev, [key]: value }));
   };
-  const themeColorSurfaceTertiary = useThemeColor('surface-tertiary');
   const fieldKeys = Object.keys(fields) as Array<keyof typeof fields>;
 
   return (
@@ -154,7 +152,7 @@ export default function Tbm() {
                   </Card.Body>
                 <Pressable
                   onPress={() => router.push({
-                    pathname: "/components/tbm-edit",
+                    pathname: "/(home)/(safety)/tbm/tbm-edit",
                     params: { index: String(key) },   // ✅ index 전달
                   })}
                   style={{
@@ -168,7 +166,7 @@ export default function Tbm() {
                     }}
                   >
                     <Image
-                      source={require("../../../../assets/icons/arrow-right-icons.png")}
+                      source={require("../../../../../assets/icons/arrow-right-icons.png")}
                       style={{ width: 12 }}
                       resizeMode="contain"
                     />
@@ -195,9 +193,9 @@ export default function Tbm() {
         </View>
       </ScrollView>
 
-      <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+      <View className="border-t border-border bg-background px-4 py-3">
         <Button size="md"
-          onPress={() => router.push("/")}
+          onPress={() => router.push("/(home)/(safety)/safety-check")}
         >
           작성 완료</Button>
       </View>

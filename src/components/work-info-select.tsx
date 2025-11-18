@@ -11,6 +11,7 @@ import { Easing } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../contexts/app-theme-context';
 import { useWork, type WorkInfo } from '../contexts/work-context';
+import { useRisk } from '../contexts/risk-context';
 import { AppText } from './app-text';
 import { SelectBlurBackdrop } from './select/select-blur-backdrop';
 
@@ -18,6 +19,7 @@ KeyboardController.preload();
 
 // 작업정보 목록
 const WORK_ITEMS: WorkInfo[] = [
+  { value: 'steel pipe welded joint', label: '기계설비공사 > 배관공사 > 강관 > 용접접합' },
   { value: 'rebar', label: '철근작업' },
   { value: 'concrete', label: '콘크리트타설' },
   { value: 'scaffold', label: '비계설치' },
@@ -32,6 +34,7 @@ const WORK_ITEMS: WorkInfo[] = [
 
 export function WorkInfoSelect() {
   const { selectedWork, setSelectedWork } = useWork();
+  const { setProcess, loading, acciLoading, tbmLoading } = useRisk();
   const [searchQuery, setSearchQuery] = useState('');
 
   const { isDark } = useAppTheme();
@@ -54,11 +57,14 @@ export function WorkInfoSelect() {
     <Select
       value={selectedWork}
       onValueChange={(newValue) => {
+        if (loading || acciLoading || tbmLoading) return;
         const work = WORK_ITEMS.find((w) => w.value === newValue?.value);
         setSelectedWork(work);
+        setProcess(work?.label?? '');
         setSearchQuery('');
       }}
       closeDelay={300}
+      isDisabled={loading || acciLoading || tbmLoading}
     >
       <Select.Trigger asChild>
         <Button variant="tertiary" className="min-w-32">

@@ -11,13 +11,11 @@ import {
   ScrollView,
   View
 } from 'react-native';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { useRisk } from '../../../contexts/risk-context';
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { useRisk } from '../../../../contexts/risk-context';
 
-
-
-export default function CheckRisk() {
-  const { hazard } = useRisk();
+export default function Accident() {
+  const { accidents } = useRisk();
   const router = useRouter();
   const { isDark } = useAppTheme();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -41,7 +39,7 @@ export default function CheckRisk() {
         showsVerticalScrollIndicator={true}
       >
         <View className="flex flex-col gap-[10px]">
-          {hazard.map((item, index) => {
+          {accidents.map((item, index) => {
                 return (
                   <Card key={index} className="pr-2">
                     <View className="flex flex-row">
@@ -49,46 +47,19 @@ export default function CheckRisk() {
                         <View className="flex flex-row gap-1">
                           <Card.Title className="text-[12px]"
                             style={{ width: 80, flexShrink: 0}}   // 원하는 폭으로 조절
-                          >유해위험요인</Card.Title>
+                          >사고번호</Card.Title>
                           <Card.Description className="text-[12px]"
                             style={{ flexShrink: 1, flexWrap: 'wrap' }}
-                          >{item.hazard_detail}
+                          >{item.metadata.case_no}
                           </Card.Description>
                         </View>
                         <View className="flex flex-row gap-1">
                           <Card.Title className="text-[12px]"
                             style={{ width: 80, flexShrink: 0}}   // 원하는 폭으로 조절
-                          >현재 조치상황</Card.Title>
+                          >사고내용</Card.Title>
                           <Card.Description className="text-[12px]"
                             style={{ flexShrink: 1, flexWrap: 'wrap' }}
-                          >{item.current_safety_measures ?? '-'}
-                          </Card.Description>
-                        </View>
-                        <View className="flex flex-row gap-1">
-                          <Card.Title className="text-[12px]"
-                            style={{ width: 80, flexShrink: 0}}   // 원하는 폭으로 조절
-                          >현재 위험성</Card.Title>
-                          <Card.Description className="text-[12px]"
-                            style={{ flexShrink: 1, flexWrap: 'wrap' }}
-                          >{item.current_risk_value ?? '-'}
-                          </Card.Description>
-                        </View>
-                        <View className="flex flex-row gap-1">
-                          <Card.Title className="text-[12px]"
-                            style={{ width: 80, flexShrink: 0}}   // 원하는 폭으로 조절
-                          >안전보건조치</Card.Title>
-                          <Card.Description className="text-[12px]"
-                            style={{ flexShrink: 1, flexWrap: 'wrap' }}
-                          >{(item.safety_measures).join('\n')}
-                          </Card.Description>
-                        </View>
-                        <View className="flex flex-row gap-1">
-                          <Card.Title className="text-[12px]"
-                            style={{ width: 80, flexShrink: 0}}   // 원하는 폭으로 조절
-                          >안전보건조치 후{'\n'}위험성</Card.Title>
-                          <Card.Description className="text-[12px]"
-                            style={{ flexShrink: 1, flexWrap: 'wrap' }}
-                          >{item.residual_risk_value ?? '-'}
+                          >{item.chunk_content ?? '-'}
                           </Card.Description>
                         </View>
                       </Card.Body>
@@ -101,11 +72,11 @@ export default function CheckRisk() {
         </View>
       </ScrollView>
 
-      <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+      <View className="border-t border-border bg-background px-4 py-3">
         <Button size="md"
-          onPress={() => router.back()}
+          onPress={() => router.push("/(home)/(safety)/safety-check")}
         >
-          내용 확인 완료</Button>
+          검토 완료</Button>
       </View>
 
       <StatusBar style={isDark ? 'light' : 'dark'} />

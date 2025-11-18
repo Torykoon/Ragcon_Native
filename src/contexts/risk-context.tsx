@@ -1,13 +1,13 @@
 // app/contexts/risk-context.tsx
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Asset } from 'expo-asset';
 import { Platform } from 'react-native';
 
 // ROUTE 타입
 const ROUTES = [
-  "/components/check-accident",
-  "/components/check-risk",
+  "/(home)/(safety)/risk/check-risk",
+  "/(home)/(safety)/accident/check-accident",
   "/",
 ] as const; 
 
@@ -78,12 +78,16 @@ type RiskState = {
   refreshHazardFromProcess: () => Promise<void>;
   refreshAccidentFromProcess: () => Promise<void>;
   refreshTbmFromProcess: () => Promise<void>;
+  cancelHazard: () => void;
+  cancelAccident: () => void;
+  cancelTbm: () => void;
+  cancelAll: () => void;
   /** 선택: 로딩/에러 상태도 노출하면 편함 */
   loading: boolean;
   error: string | null;
   acciLoading: boolean;
   acciError: string | null;
-  tbmloading: boolean;
+  tbmLoading: boolean;
   tbmError: string | null;
   reset: () => void;
 };
@@ -143,12 +147,35 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
 
   
   // 통신 상태
-  const [tbmloading, setTbmLoading] = useState(false);
+  const [tbmLoading, setTbmLoading] = useState(false);
   const [tbmError, setTbmError]     = useState<string | null>(null);
+
+  const hazardControllerRef = useRef<AbortController | null>(null);
+  const acciControllerRef   = useRef<AbortController | null>(null);
+  const tbmControllerRef    = useRef<AbortController | null>(null);
 
   // 서버 호출 → hazard 갱신
   const refreshHazardFromProcess = async () => {
+    // 이전 요청이 살아있으면 먼저 중지
+    hazardControllerRef.current?.abort();
+    const controller = new AbortController();
+    hazardControllerRef.current = controller;
+
     try {
+      setHazard([{
+        hazard_category: "-",
+        hazard_cause: "-",
+        hazard_detail: "-",
+        legal_reference: "-",
+        safety_measures: ["-"],
+        risk_likelihood: { level: "-", score: "-" },
+        risk_severity: { level: "-", score: "-" },
+        risk_level: { level: "-", score: "-" },
+        mitigation: null,
+        current_safety_measures: null,
+        current_risk_value: null,
+        residual_risk_value: null,
+      }]);
       setLoading(true);
       setError(null);
       const res = await fetch('http://43.200.214.138:8080/risk-assessment', {
@@ -157,6 +184,7 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
       body: JSON.stringify({
           RiskAssessment: { description: process },
       }),
+      signal: controller.signal,   // ✅ 취소 신호 연결
     });
 
     if (!res.ok) {
@@ -177,9 +205,14 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
     setHazard(nextHazard);
 
     } catch (e: any) {
-        setError(e?.message ?? String(e));
+      if (e?.name === 'AbortError') {
+        // 사용자가 취소한 경우: 에러 노출 X
+        return;
+      }
+      setError(e?.message ?? String(e));
     } finally {
-        setLoading(false);
+      setLoading(false);
+      hazardControllerRef.current = null;
     }
   };
 
@@ -220,7 +253,12 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
 
   // 서버 호출 → accident 갱신
   const refreshAccidentFromProcess = async () => {
+    acciControllerRef.current?.abort();
+    const controller = new AbortController();
+    acciControllerRef.current = controller;
+
     try {
+      setAccidents([]);
       setAcciLoading(true);
       setAcciError(null);
       const res = await fetch('http://43.200.214.138:8080/accident-cases', {
@@ -229,6 +267,7 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
         body: JSON.stringify({
           RiskAssessment: { description: process },
         }),
+        signal: controller.signal,   // ✅
       });
 
       if (!res.ok) {
@@ -251,25 +290,83 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
       setAccidents(filtered);
 
     } catch (e: any) {
+      if (e?.name === 'AbortError') {
+        return;
+      }
       console.log('[Accident catch error]', e, e?.message);
       setAcciError(e?.message ?? String(e));
     } finally {
       setAcciLoading(false);
+      acciControllerRef.current = null;
     }
   };
+
+  // "['a', 'b', ...]" 같은 배열 문자열인지 대략 체크하는 정규식
+  const ARRAY_STRING_REGEX = /^\s*\[(\s*"[^"]*"\s*,)*\s*"[^"]*"\s*\]\s*$/;
+
+  /**
+   * 값이 '["a","b", ...]' 형태의 문자열이면:
+   *  - JSON.parse
+   *  - 중복 제거
+   *  - 앞에서 10개만 남김
+   * 그 외에는 그대로 반환
+   */
+  function normalizeArrayStringValue(value: unknown): unknown {
+    if (typeof value !== 'string') return value;
+
+    const trimmed = value.trim();
+    if (!ARRAY_STRING_REGEX.test(trimmed)) return value;
+
+    try {
+      const parsed = JSON.parse(trimmed);
+
+      if (Array.isArray(parsed)) {
+        const unique = Array.from(new Set(parsed));
+        return unique.slice(0, 10);
+      }
+
+      return value;
+    } catch {
+      // 파싱 실패하면 원래 값 그대로 돌려줌
+      return value;
+    }
+  }
+
+  /**
+   * 응답 JSON 전체를 순회하면서
+   *  - 문자열인 필드들 중 배열 문자열을 찾아 정제
+   *  - 객체/배열은 재귀적으로 처리
+   */
+  function sanitizeResponse(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map(sanitizeResponse);
+    }
+
+    if (obj !== null && typeof obj === 'object') {
+      const result: any = {};
+      for (const [key, val] of Object.entries(obj)) {
+        result[key] = sanitizeResponse(val);
+      }
+      return result;
+    }
+
+    // 원시값(문자열 등)에 대해 배열 문자열 정제
+    return normalizeArrayStringValue(obj);
+  }
 
   // 서버 호출 → tbm 갱신
   const API_BASE = 'http://43.200.214.138:8080';
 
   type TbmApiResponse = Record<string, any>; // 응답이 { precautions_list: [...]} 이런 형태
 
-  async function postRiskApi(endpoint: string, process: string): Promise<TbmApiResponse> {
+  async function postRiskApi(endpoint: string, process: string, signal?: AbortSignal): Promise<TbmApiResponse> {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         RiskAssessment: { description: process },
       }),
+      signal, // ✅
     });
 
     if (!res.ok) {
@@ -278,7 +375,9 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
 
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('application/json')) {
-      return await res.json();  // 예: { precautions_list: [...] }
+      const json = await res.json();          // 원본 JSON
+      const sanitized = sanitizeResponse(json); // ✅ 여기서 정규식 + 중복 제거 + 10개 제한
+      return sanitized as TbmApiResponse;
     } else {
       // 혹시 모를 상황 대비 (원하면 여기서 에러 던져도 됨)
       const text = await res.text();
@@ -287,6 +386,15 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
   }
 
   const refreshTbmFromProcess = async () => {
+    tbmControllerRef.current?.abort();
+    const controller = new AbortController();
+    tbmControllerRef.current = controller;
+
+    setTbm({
+      precautions: [],
+      checklist: [],
+      management: []
+    });
     setTbmLoading(true);
     setTbmError(null);
 
@@ -296,9 +404,9 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
         checklistData,   // { checklist_list: [...] }
         managementData,  // { management_list: [...] }
       ] = await Promise.all([
-        postRiskApi('/precautions', process),
-        postRiskApi('/checklist', process),
-        postRiskApi('/management', process),
+        postRiskApi('/precautions', process, controller.signal),
+        postRiskApi('/checklist', process, controller.signal),
+        postRiskApi('/management', process, controller.signal),
       ]);
 
       // ✅ 응답 객체들을 다 펼쳐서 tbm에 머지
@@ -309,15 +417,43 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
         ...managementData,
       }));
     } catch (e: any) {
+        if (e?.name === 'AbortError') {
+        return;
+      }
       setTbmError(e?.message ?? String(e));
     } finally {
       setTbmLoading(false);
+      tbmControllerRef.current = null;
     }
+  };
+
+  const cancelHazard = () => {
+    hazardControllerRef.current?.abort();
+    hazardControllerRef.current = null;
+    setLoading(false);
+  };
+
+  const cancelAccident = () => {
+    acciControllerRef.current?.abort();
+    acciControllerRef.current = null;
+    setAcciLoading(false);
+  };
+
+  const cancelTbm = () => {
+    tbmControllerRef.current?.abort();
+    tbmControllerRef.current = null;
+    setTbmLoading(false);
+  };
+
+  const cancelAll = () => {
+    cancelHazard();
+    cancelAccident();
+    cancelTbm();
   };
 
   const value = useMemo(() => ({
     process, equipments, hazard, accidents, tbm,
-    setProcess, setEquipments, setHazard, setAccidents, setTbm, refreshHazardFromProcess, refreshAccidentFromProcess, refreshTbmFromProcess, loading, error, acciLoading, acciError, tbmloading, tbmError,
+    setProcess, setEquipments, setHazard, setAccidents, setTbm, refreshHazardFromProcess, refreshAccidentFromProcess, refreshTbmFromProcess, loading, error, acciLoading, acciError, tbmLoading, tbmError,
     reset: () => { setProcess('기계설비공사 > 배관공사 > 강관 > 용접접합'); setEquipments('덤프트럭'); 
       setHazard([{
         hazard_category: "-",
@@ -334,7 +470,11 @@ export function RiskProvider({children}:{children:React.ReactNode}) {
         residual_risk_value: null,
       }]);
     },
-  }), [process, equipments, hazard, accidents, tbm, loading, error,  acciLoading, acciError, tbmloading, tbmError]);
+    cancelHazard,
+    cancelAccident,
+    cancelTbm,
+    cancelAll,
+  }), [process, equipments, hazard, accidents, tbm, loading, error,  acciLoading, acciError, tbmLoading, tbmError]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

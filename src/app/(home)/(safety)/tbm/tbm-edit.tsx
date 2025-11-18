@@ -12,9 +12,9 @@ import {
   ScrollView,
   View
 } from 'react-native';
-import { useAppTheme } from '../../../contexts/app-theme-context';
-import { useRisk, TBM_LABELS } from '../../../contexts/risk-context';
-import type { Tbm, TbmKey } from '../../../contexts/risk-context'; 
+import { useAppTheme } from '../../../../contexts/app-theme-context';
+import { useRisk, TBM_LABELS } from '../../../../contexts/risk-context';
+import type { Tbm, TbmKey } from '../../../../contexts/risk-context'; 
 
 export default function TbmEdit() {
   const { tbm, setTbm} = useRisk();
@@ -80,14 +80,14 @@ export default function TbmEdit() {
         </ScrollView>
 
         {/* ✅ 하단 고정 버튼 영역 */}
-        <View className="border-t border-border bg-background px-4 pt-3 pb-12">
+        <View className="border-t border-border bg-background px-4 py-3">
           <Button size="md"
             onPress={() => {
               const editedTbm: Partial<Tbm> = {};
               editedTbm[tbmIndex] = tbmInput.split('\n')
               const updatedTbm = {...tbm, ...editedTbm}
               setTbm(updatedTbm);                 
-              router.push("/components/tbm");
+              router.back();
             }}>
               수정 완료
           </Button>
