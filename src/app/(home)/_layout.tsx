@@ -3,11 +3,11 @@ import { Stack } from 'expo-router';
 import { useThemeColor } from 'heroui-native';
 import { useCallback } from 'react';
 import { Image, Platform, StyleSheet } from 'react-native';
-import LogoDark from '../../../assets/logo-dark.png';
-import LogoLight from '../../../assets/logo-light.png';
+import LogoDark from '../../../assets/safe-logo-dark.png';
+import LogoLight from '../../../assets/safe-logo-light.png';
+import { BottomNav } from '../../components/BottomNav'; // 실제 경로에 맞게 수정
 import { ThemeToggle } from '../../components/theme-toggle';
 import { useAppTheme } from '../../contexts/app-theme-context';
-import { BottomNav } from '../../components/BottomNav'; // 실제 경로에 맞게 수정
 
 export default function Layout() {
   const { isDark } = useAppTheme();
@@ -147,7 +147,7 @@ export default function Layout() {
 
 const styles = StyleSheet.create({
   logo: {
-    width: 80,
-    height: 24,
+    width: 150,
+    height: 42,
   },
 });

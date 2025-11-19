@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { TextInput, useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
-    KeyboardAvoidingView,
-    KeyboardController,
+  KeyboardAvoidingView,
+  KeyboardController,
 } from 'react-native-keyboard-controller';
 import { Easing } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../contexts/app-theme-context';
-import { useWork, type WorkInfo } from '../contexts/work-context';
 import { useRisk } from '../contexts/risk-context';
+import { useWork, type WorkInfo } from '../contexts/work-context';
 import { AppText } from './app-text';
 import { SelectBlurBackdrop } from './select/select-blur-backdrop';
 
@@ -19,17 +19,17 @@ KeyboardController.preload();
 
 // 작업정보 목록
 const WORK_ITEMS: WorkInfo[] = [
-  { value: 'steel pipe welded joint', label: '기계설비공사 > 배관공사 > 강관 > 용접접합' },
-  { value: 'rebar', label: '철근작업' },
-  { value: 'concrete', label: '콘크리트타설' },
-  { value: 'scaffold', label: '비계설치' },
-  { value: 'demolition', label: '해체작업' },
-  { value: 'welding', label: '용접작업' },
-  { value: 'painting', label: '도장작업' },
-  { value: 'excavation', label: '굴착작업' },
-  { value: 'formwork', label: '거푸집작업' },
-  { value: 'steel', label: '철골작업' },
-  { value: 'masonry', label: '조적작업' },
+  { value: '01', label: '기계설비공사 > 배관공사 > 강관 > 용접접합' },
+  { value: '02', label: '기계설비공사 > 보온공사 > 발열선 > 분전함 설치' },
+  { value: '03', label: '기계설비공사 > 기타공사 > 도장 > 유성페인트 칠' },
+  { value: '04', label: '기계설비공사 > 자동제어설비공사 > 자동제어기기 > 도압배관' },
+  { value: '05', label: '기계설비공사 > 자동제어설비공사 > 전선배선 > 중앙처리장치(CPU) 설치' },
+  { value: '06', label: '기계설비공사 > 플랜트설비공사 > 플랜트 배관 > 플랜트 배관 설치' },
+  { value: '07', label: '기계설비공사 > 플랜트설비공사 > 강재 제작 설치 > 철골 가공조립' },
+  { value: '08', label: '기계설비공사 > 플랜트설비공사 > 강재 제작 설치 > 도장 및 방청공사' },
+  { value: '09', label: '건축공사 > 조적공사 > 벽돌 > 벽돌 쌓기' },
+  { value: '10', label: '건축공사 > 타일공사 > 타일 붙임 > 접착 붙이기' },
+  { value: '11', label: '건축공사 > 칠공사 > 페인트 > 수성페인트 붓칠' },
 ];
 
 export function WorkInfoSelect() {

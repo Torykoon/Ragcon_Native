@@ -1,11 +1,10 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Button, useThemeColor } from 'heroui-native';
+import { useEffect } from 'react'; // useEffect 추가
 import { Image, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import LogoLight from '../../assets/ragcon_icon.png';
-import { AppText } from '../components/app-text';
+import LogoLight from '../../assets/safe-logo.png';
 import { useAppTheme } from '../contexts/app-theme-context';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
@@ -13,8 +12,18 @@ const AnimatedImage = Animated.createAnimatedComponent(Image);
 export default function StartScreen() {
   const router = useRouter();
   const { isDark } = useAppTheme();
-  const themeColorBackground = useThemeColor('background');
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    // 2초(2000ms) 뒤에 실행될 타이머 설정
+    const timer = setTimeout(() => {
+      // replace를 사용하면 뒤로가기 시 다시 스플래시 화면으로 돌아오지 않습니다.
+      router.replace('/(home)'); 
+    }, 2000);
+
+    // 컴포넌트가 언마운트(화면이 사라짐)될 때 타이머 정리 (메모리 누수 방지)
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <View 
@@ -30,29 +39,8 @@ export default function StartScreen() {
           className="w-70 h-70"
           resizeMode="contain"
         />
-        <Animated.View entering={FadeInDown.duration(800).delay(200)}>
-          <AppText className="text-3xl font-bold text-foreground text-center">
-            Ragcon Native에 오신 것을 환영합니다
-          </AppText>
-        </Animated.View>
-        <Animated.View entering={FadeInDown.duration(800).delay(400)}>
-          <AppText className="text-lg text-muted text-center">
-            건설현장 AI 시스템 데모
-          </AppText>
-        </Animated.View>
       </View>
       
-      <Animated.View 
-        className="w-full"
-        entering={FadeInDown.duration(800).delay(600)}
-      >
-        <Button
-          size="lg"
-          onPress={() => router.push('/(home)')}
-        >
-          <Button.Label>시작하기</Button.Label>
-        </Button>
-      </Animated.View>
     </View>
   );
 }

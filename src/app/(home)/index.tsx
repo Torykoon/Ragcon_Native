@@ -98,16 +98,6 @@ const favorites: FavoriteItemData[] = [
     imageUrl: 'https://cdn.pixabay.com/photo/2017/04/19/19/04/table-saw-2243289_1280.jpg',
     label: '베임 사고',
   },
-  {
-    id: '5',
-    imageUrl: 'https://i.pravatar.cc/150?img=1',
-    label: '더미',
-  },
-  {
-    id: '6',
-    imageUrl: 'https://i.pravatar.cc/150?img=2',
-    label: '더미',
-  },
 ];
 
 type FavoriteItemProps = {
